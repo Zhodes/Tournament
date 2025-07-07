@@ -1,9 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
 using Tournament.Core.Entities;
 using Tournament.Core.Repositories;
 using Tournament.Data.Data;
@@ -29,29 +24,24 @@ namespace Tournament.Data.Repositories
             return await _context.Game.AnyAsync(g => g.Id == id);
         }
 
-        //public async Task<IEnumerable<Game>> FindAsync(Expression<Func<Game, bool>> predicate)
-        //{
-        //    return await _context.Games.Where(predicate).ToListAsync();
-        //}
-
         public async Task<IEnumerable<Game>> GetAllAsync()
         {
             return await _context.Game
-                .Include(g => g.TournamentDetails) // optional: include Tournament if you want extra data
+                .Include(g => g.TournamentDetails)
                 .ToListAsync();
         }
 
         public async Task<Game?> GetByIdAsync(int id)
         {
             return await _context.Game
-                .Include(g => g.TournamentDetails) // optional: include Tournament
+                .Include(g => g.TournamentDetails)
                 .FirstOrDefaultAsync(g => g.Id == id);
         }
 
         public async Task<Game?> GetByTitleAsync(string title)
         {
             return await _context.Game
-                .Include(g => g.TournamentDetails) // optional: include Tournament
+                .Include(g => g.TournamentDetails)
                 .FirstOrDefaultAsync(g => g.Title == title);
         }
 

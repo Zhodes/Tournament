@@ -1,6 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Tournament.Core.Entities;
 using Tournament.Core.Repositories;
 using Tournament.Core.Dtos;
@@ -66,7 +64,6 @@ namespace Tournament.Data.Controllers
             tournament.Title = dto.Title;
             tournament.StartDate = dto.StartDate;
 
-            // Reassign games by ID
             tournament.Games.Clear();
             foreach (var gameId in dto.GameIds)
             {
@@ -90,10 +87,8 @@ namespace Tournament.Data.Controllers
 
             try
             {
-                // Map the incoming DTO to entity
                 var tournamentEntity = _mapper.Map<TournamentDetails>(tournamentDto);
 
-                // Link games to the tournament
                 foreach (var game in tournamentEntity.Games)
                 {
                     game.TournamentDetails = tournamentEntity;

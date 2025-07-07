@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using Torunament.Data.Repositories;
+﻿using Torunament.Data.Repositories;
 using Tournament.Core.Repositories;
 using Tournament.Data.Data;
 
@@ -9,7 +8,6 @@ namespace Tournament.Data.Repositories
     {
         private readonly TournamentApiContext _context;
 
-        // Backing fields
         public IGameRepository GameRepository { get; }
         public ITournamentRepository TournamentRepository { get;}
 

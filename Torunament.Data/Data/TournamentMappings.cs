@@ -1,9 +1,4 @@
 ﻿using AutoMapper;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Tournament.Core.Entities;
 using Tournament.Core.Dtos;
 
@@ -22,7 +17,7 @@ namespace Tournament.Data.Data
             CreateMap<GameDto, Game>();
             CreateMap<TournamentDetails, TournamentDto>().ReverseMap();
 
-
+            //test
         }
     }
 }

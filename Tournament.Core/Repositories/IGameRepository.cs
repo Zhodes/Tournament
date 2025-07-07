@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Tournament.Core.Entities;
+﻿using Tournament.Core.Entities;
 
 namespace Tournament.Core.Repositories
 {
@@ -16,6 +11,5 @@ namespace Tournament.Core.Repositories
         void Update(Game game);
         void Remove(Game game);
         Task<Game?> GetByTitleAsync(string title);
-        //Task FindAsync(string value);
     }
 }

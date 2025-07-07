@@ -1,9 +1,4 @@
 ﻿using Bogus;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Tournament.Core.Entities;
 using Tournament.Data.Data;
 using Microsoft.EntityFrameworkCore;
@@ -30,7 +25,7 @@ namespace Torunament.Data.Data
             catch (Exception ex)
             {
                 // Optional: Log the error
-                throw;
+                throw new Exception($"An error occurred while seeding the database: {ex.Message}", ex);
             }
         }
         
