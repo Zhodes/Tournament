@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
-using Tournament.Core.Dtos;
-using Tournament.Core.Entities;
-using Tournament.Core.Repositories;
+using Domain.Core.Dtos;
+using Domain.Core.Entities;
+using Domain.Core.Repositories;
 
-namespace Tournament.Data.Controllers
+namespace Domain.Presentation.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

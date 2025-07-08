@@ -1,6 +1,6 @@
 ﻿using Bogus;
-using Tournament.Core.Entities;
-using Tournament.Data.Data;
+using Domain.Core.Entities;
+using Domain.Presentation.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace Torunament.Data.Data

@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Tournament.Core.Entities;
-using Tournament.Core.Repositories;
-using Tournament.Core.Dtos;
+using Domain.Core.Entities;
+using Domain.Core.Repositories;
+using Domain.Core.Dtos;
 using AutoMapper;
 using Microsoft.AspNetCore.JsonPatch;
 
-namespace Tournament.Data.Controllers
+namespace Domain.Presentation.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -26,7 +26,7 @@ namespace Tournament.Data.Controllers
     [FromQuery] string? sortBy = null,
     [FromQuery] string? order = "asc")
         {
-            IEnumerable<Tournament.Core.Entities.TournamentDetails> tournaments;
+            IEnumerable<Domain.Core.Entities.TournamentDetails> tournaments;
 
             if (includeGames)
                 tournaments = await _unitOfWork.TournamentRepository.GetAllIncludingGamesAsync();

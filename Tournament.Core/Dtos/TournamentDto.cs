@@ -1,4 +1,4 @@
-﻿namespace Tournament.Core.Dtos
+﻿namespace Domain.Core.Dtos
 {
     public class TournamentDto
     {

@@ -1,10 +1,10 @@
 using Microsoft.EntityFrameworkCore;
-using Tournament.Api.Extensions;
-using Tournament.Core.Repositories;
-using Tournament.Data.Data;
-using Tournament.Data.Repositories;
+using Domain.Api.Extensions;
+using Domain.Core.Repositories;
+using Domain.Presentation.Data;
+using Domain.Presentation.Repositories;
 
-namespace Tournament.Data
+namespace Domain.Presentation
 {
     public class Program
     {
