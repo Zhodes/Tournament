@@ -1,10 +1,11 @@
-using Microsoft.EntityFrameworkCore;
-using Tournament.Api.Extensions;
-using Tournament.Data.Repositories;
-using Tournament.Data.Data;
 using Domain.Contracts.Repositories;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
+using Microsoft.EntityFrameworkCore;
 using System.Reflection;
+using Tournament.Api.Extensions;
+using Tournament.Data.Data;
+using Tournament.Data.Repositories;
+using Tournament.Services;
 
 namespace Tournament.Api
 {
@@ -27,6 +28,9 @@ namespace Tournament.Api
 
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+            builder.Services.AddScoped<IServiceManager, ServiceManager>();
+            builder.Services.AddScoped<IGameService, GameService>();
+            builder.Services.AddScoped<ITournamentService, TournamentService>();
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             builder.Services.AddAutoMapper(typeof(TournamentMappings));
 

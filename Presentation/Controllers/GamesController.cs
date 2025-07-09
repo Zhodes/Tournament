@@ -1,9 +1,7 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.JsonPatch;
+﻿using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
-using Domain.Models.Entities;
 using Tournament.DTOs.Games;
-using Domain.Contracts.Repositories;
+using Tournament.Services;
 
 namespace Tournament.Presentation.Controllers
 {
@@ -11,144 +9,56 @@ namespace Tournament.Presentation.Controllers
     [ApiController]
     public class GamesController : ControllerBase
     {
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
+        private readonly IServiceManager _service;
 
-        public GamesController(IUnitOfWork unitOfWork, IMapper mapper)
+        public GamesController(IServiceManager service)
         {
-            _unitOfWork = unitOfWork;
-            _mapper = mapper;
+            _service = service;
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<GameDto>>> GetGame(
-     [FromQuery] string? sortBy = null,
-     [FromQuery] string? order = "asc")
+            [FromQuery] string? sortBy = null,
+            [FromQuery] string? order = "asc")
         {
-            var games = await _unitOfWork.GameRepository.GetAllAsync();
-
-            games = sortBy?.ToLower() switch
-            {
-                "title" => order == "desc" ? games.OrderByDescending(g => g.Title) : games.OrderBy(g => g.Title),
-                "time" => order == "desc" ? games.OrderByDescending(g => g.Time) : games.OrderBy(g => g.Time),
-                _ => games
-            };
-
-            var dtos = _mapper.Map<IEnumerable<GameDto>>(games);
-            return Ok(dtos);
+            var games = await _service.GameService.GetAllGamesAsync(sortBy, order);
+            return Ok(games);
         }
 
         [HttpGet("{title}")]
         public async Task<ActionResult<GameDto>> GetGame(string title)
         {
-            var game = await _unitOfWork.GameRepository.GetByTitleAsync(title);
+            var game = await _service.GameService.GetGameByTitleAsync(title);
             if (game == null) return NotFound($"Game with Title {title} not found.");
-
-            var dto = _mapper.Map<GameDto>(game);
-            return Ok(dto);
+            return Ok(game);
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> PutGame(int id, GameForUpdateDto gameDto)
         {
-            if (id != gameDto.Id)
-                return BadRequest("ID mismatch.");
-
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            var existingGame = await _unitOfWork.GameRepository.GetByIdAsync(id);
-            if (existingGame == null)
-                return NotFound($"Game with ID {id} not found.");
-
-            _mapper.Map(gameDto, existingGame);
-
-            try
-            {
-                await _unitOfWork.CompleteAsync();
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, "Internal server error while updating game.");
-            }
-
-            return NoContent();
+            var result = await _service.GameService.UpdateGameAsync(id, gameDto);
+            return result;
         }
-
 
         [HttpPost]
         public async Task<ActionResult<GameDto>> PostGame(GameForCreationDto gameDto)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            try
-            {
-                var gameEntity = _mapper.Map<Game>(gameDto);
-                _unitOfWork.GameRepository.Add(gameEntity);
-                await _unitOfWork.CompleteAsync();
-
-                var dto = _mapper.Map<GameDto>(gameEntity);
-                return CreatedAtAction(nameof(GetGame), new { id = gameEntity.Id }, dto);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
+            var createdGame = await _service.GameService.CreateGameAsync(gameDto);
+            return CreatedAtAction(nameof(GetGame), new { title = createdGame.Title }, createdGame);
         }
-
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteGame(int id)
         {
-            var game = await _unitOfWork.GameRepository.GetByIdAsync(id);
-            if (game == null) return NotFound();
-
-            try
-            {
-                _unitOfWork.GameRepository.Remove(game);
-            await _unitOfWork.CompleteAsync();
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
-            return NoContent();
+            var result = await _service.GameService.DeleteGameAsync(id);
+            return result;
         }
 
         [HttpPatch("{id}")]
-        public async Task<ActionResult<GameDto>> PatchTournamentDetails(int id, JsonPatchDocument<GameDto> patchDoc)
+        public async Task<ActionResult<GameDto>> PatchGame(int id, JsonPatchDocument<GameDto> patchDoc)
         {
-            if (patchDoc == null)
-                return BadRequest("Patch document cannot be null.");
-
-            var game = await _unitOfWork.GameRepository.GetByIdAsync(id);
-            if (game == null)
-                return NotFound($"Game with ID {id} not found.");
-
-            var GameDto = _mapper.Map<GameDto>(game);
-
-            patchDoc.ApplyTo(GameDto, error =>
-            {
-                ModelState.AddModelError(error.AffectedObject?.ToString() ?? "", error.ErrorMessage);
-            });
-
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            _mapper.Map(GameDto, game);
-
-            try
-            {
-                await _unitOfWork.CompleteAsync();
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
-
-            return Ok(GameDto);
+            var result = await _service.GameService.PatchGameAsync(id, patchDoc, ModelState);
+            return result;
         }
-
     }
 }
