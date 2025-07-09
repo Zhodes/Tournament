@@ -1,10 +1,12 @@
 using Microsoft.EntityFrameworkCore;
-using Domain.Api.Extensions;
-using Domain.Core.Repositories;
-using Domain.Presentation.Data;
-using Domain.Presentation.Repositories;
+using Tournament.Api.Extensions;
+using Tournament.Data.Repositories;
+using Tournament.Data.Data;
+using Domain.Contracts.Repositories;
+using Microsoft.AspNetCore.Mvc.ApplicationParts;
+using System.Reflection;
 
-namespace Domain.Presentation
+namespace Tournament.Api
 {
     public class Program
     {
@@ -16,9 +18,13 @@ namespace Domain.Presentation
 
 
             builder.Services.AddControllers(opt => opt.ReturnHttpNotAcceptable = true)
+                .ConfigureApplicationPartManager(apm =>
+                {
+                    apm.ApplicationParts.Add(new AssemblyPart(typeof(Tournament.Presentation.Controllers.TournamentDetailsController).Assembly));
+                })
                 .AddNewtonsoftJson()
-                .AddXmlSerializerFormatters()
-                ;
+                .AddXmlSerializerFormatters();
+
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();

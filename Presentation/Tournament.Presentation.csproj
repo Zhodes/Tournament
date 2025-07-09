@@ -12,4 +12,12 @@
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.11" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Domain.Contracts\Domain.Contracts.csproj" />
+    <ProjectReference Include="..\Torunament.Data\Tournament.Data.csproj" />
+    <ProjectReference Include="..\Tournament.Core\Tournament.Core.csproj" />
+    <ProjectReference Include="..\Tournament.DTOs\Tournament.DTOs.csproj" />
+    <ProjectReference Include="..\Tournament.Models\Domain.Models.csproj" />
+  </ItemGroup>
+
 </Project>

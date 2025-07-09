@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Domain.Core.Entities;
-using Domain.Core.Repositories;
-using Domain.Presentation.Data;
+using Domain.Models.Entities;
+using Tournament.Data.Data;
+using Domain.Contracts.Repositories;
 
-namespace Torunament.Data.Repositories
+namespace Tournament.Data.Repositories
 {
     internal class TournamentRepository :  ITournamentRepository
     {

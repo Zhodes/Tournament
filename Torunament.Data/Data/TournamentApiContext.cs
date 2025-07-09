@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace Domain.Presentation.Data
+namespace Tournament.Data.Data
 {
     public class TournamentApiContext : DbContext
     {
@@ -9,7 +9,7 @@ namespace Domain.Presentation.Data
         {
         }
 
-        public DbSet<Domain.Core.Entities.TournamentDetails> TournamentDetails { get; set; } = default!;
-        public DbSet<Domain.Core.Entities.Game> Game { get; set; } = default!;
+        public DbSet<Domain.Models.Entities.TournamentDetails> TournamentDetails { get; set; } = default!;
+        public DbSet<Domain.Models.Entities.Game> Game { get; set; } = default!;
     }
 }

@@ -1,6 +1,6 @@
-﻿using Domain.Core.Entities;
+﻿using Domain.Models.Entities;
 
-namespace Domain.Core.Repositories
+namespace Domain.Contracts.Repositories
 {
     public interface ITournamentRepository
     {

@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tournament.Api", "Tournamen
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tournament.Core", "Tournament.Core\Tournament.Core.csproj", "{5169C135-7809-4988-B12C-AF1AF6CF1EEC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Torunament.Data", "Torunament.Data\Torunament.Data.csproj", "{6314B4E5-C2E9-4643-B951-A896956C4F17}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tournament.Data", "Torunament.Data\Tournament.Data.csproj", "{6314B4E5-C2E9-4643-B951-A896956C4F17}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tournament.Presentation", "Presentation\Tournament.Presentation.csproj", "{1D071DAC-05D3-43C7-9F5F-060AEA93DC30}"
 EndProject

@@ -14,7 +14,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Domain.Contracts\Domain.Contracts.csproj" />
     <ProjectReference Include="..\Tournament.Core\Tournament.Core.csproj" />
+    <ProjectReference Include="..\Tournament.DTOs\Tournament.DTOs.csproj" />
+    <ProjectReference Include="..\Tournament.Models\Domain.Models.csproj" />
   </ItemGroup>
 
 </Project>

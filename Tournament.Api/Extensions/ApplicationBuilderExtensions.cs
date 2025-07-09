@@ -1,7 +1,6 @@
-﻿using Torunament.Data.Data;
-using Domain.Presentation.Data;
+﻿using Tournament.Data.Data;
 
-namespace Domain.Api.Extensions
+namespace Tournament.Api.Extensions
 {
     public static class ApplicationBuilderExtensions
     {

@@ -1,8 +1,9 @@
 ﻿using AutoMapper;
-using Domain.Core.Entities;
-using Domain.Core.Dtos;
+using Domain.Models.Entities;
+using Tournament.DTOs.Games;
+using Tournament.DTOs.Tournaments;
 
-namespace Domain.Presentation.Data
+namespace Tournament.Data.Data
 {
     public class TournamentMappings : Profile
     {

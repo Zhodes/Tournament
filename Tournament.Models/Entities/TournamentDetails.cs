@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Domain.Core.Entities
+namespace Domain.Models.Entities
 {
     public class TournamentDetails
     {

@@ -1,9 +1,8 @@
 ﻿using Bogus;
-using Domain.Core.Entities;
-using Domain.Presentation.Data;
+using Domain.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace Torunament.Data.Data
+namespace Tournament.Data.Data
 {
     public static class SeedData
     {
