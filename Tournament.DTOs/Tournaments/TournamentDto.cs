@@ -9,7 +9,5 @@ namespace Tournament.DTOs.Tournaments
         public DateTime EndDate { get; set; }
         public List<GameDto> Games { get; set; }
 
-
-
     }
 }

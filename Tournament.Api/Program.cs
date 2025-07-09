@@ -20,7 +20,7 @@ namespace Tournament.Api
             builder.Services.AddControllers(opt => opt.ReturnHttpNotAcceptable = true)
                 .ConfigureApplicationPartManager(apm =>
                 {
-                    apm.ApplicationParts.Add(new AssemblyPart(typeof(Tournament.Presentation.Controllers.TournamentDetailsController).Assembly));
+                    apm.ApplicationParts.Add(new AssemblyPart(typeof(Presentation.AssemblyReference).Assembly));
                 })
                 .AddNewtonsoftJson()
                 .AddXmlSerializerFormatters();
