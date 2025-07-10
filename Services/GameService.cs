@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Tournament.DTOs.Games;
+using Tournament.DTOs.Shared;
 
 namespace Tournament.Services
 {
@@ -19,10 +20,11 @@ namespace Tournament.Services
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<GameDto>> GetAllGamesAsync(string? sortBy, string? order)
+        public async Task<PagedResult<GameDto>> GetAllGamesAsync(int page, int pageSize, string? sortBy, string? order)
         {
             var games = await _unitOfWork.GameRepository.GetAllAsync();
 
+            // Sorting
             games = sortBy?.ToLower() switch
             {
                 "title" => order == "desc" ? games.OrderByDescending(g => g.Title) : games.OrderBy(g => g.Title),
@@ -30,8 +32,26 @@ namespace Tournament.Services
                 _ => games
             };
 
-            return _mapper.Map<IEnumerable<GameDto>>(games);
+            // Pagination rules
+            const int maxPageSize = 100;
+            pageSize = Math.Min(pageSize > 0 ? pageSize : 20, maxPageSize);
+            page = page <= 0 ? 1 : page;
+
+            var totalItems = games.Count();
+            var pagedGames = games
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            return new PagedResult<GameDto>
+            {
+                Items = _mapper.Map<IEnumerable<GameDto>>(pagedGames),
+                TotalItems = totalItems,
+                PageSize = pageSize,
+                CurrentPage = page
+            };
         }
+
 
         public async Task<ActionResult<GameDto>> GetGameByTitleAsync(string title)
         {

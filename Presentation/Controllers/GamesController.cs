@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Tournament.DTOs.Games;
+using Tournament.DTOs.Shared;
 using Tournament.Services;
 
 namespace Tournament.Presentation.Controllers
@@ -17,13 +18,16 @@ namespace Tournament.Presentation.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<GameDto>>> GetGame(
-            [FromQuery] string? sortBy = null,
-            [FromQuery] string? order = "asc")
+        public async Task<ActionResult<PagedResult<GameDto>>> GetGame(
+    [FromQuery] int page = 1,
+    [FromQuery] int pageSize = 20,
+    [FromQuery] string? sortBy = null,
+    [FromQuery] string? order = "asc")
         {
-            var games = await _service.GameService.GetAllGamesAsync(sortBy, order);
-            return Ok(games);
+            var pagedGames = await _service.GameService.GetAllGamesAsync(page, pageSize, sortBy, order);
+            return Ok(pagedGames); // Metadata is included in response body
         }
+
 
         [HttpGet("{title}")]
         public async Task<ActionResult<GameDto>> GetGame(string title)

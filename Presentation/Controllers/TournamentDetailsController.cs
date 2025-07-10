@@ -1,127 +1,68 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.JsonPatch;
+﻿using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
-using Domain.Models.Entities;
+using Tournament.DTOs.Shared;
 using Tournament.DTOs.Tournaments;
-using Domain.Contracts.Repositories;
+
 namespace Tournament.Presentation.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class TournamentDetailsController : ControllerBase
     {
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
+        private readonly IServiceManager _service;
 
-        public TournamentDetailsController(IUnitOfWork unitOfWork, IMapper mapper)
+        public TournamentDetailsController(IServiceManager service)
         {
-            _unitOfWork = unitOfWork;
-            _mapper = mapper;
+            _service = service;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<TournamentDto>>> GetTournamentDetails(
+        public async Task<ActionResult<PagedResult<TournamentDto>>> GetTournamentDetails(
     [FromQuery] bool includeGames = false,
     [FromQuery] string? sortBy = null,
-    [FromQuery] string? order = "asc")
+    [FromQuery] string? order = "asc",
+    [FromQuery] int page = 1,
+    [FromQuery] int pageSize = 20)
         {
-            IEnumerable<Domain.Models.Entities.TournamentDetails> tournaments;
-
-            if (includeGames)
-                tournaments = await _unitOfWork.TournamentRepository.GetAllIncludingGamesAsync();
-            else
-                tournaments = await _unitOfWork.TournamentRepository.GetAllAsync();
-
-            tournaments = sortBy?.ToLower() switch
-            {
-                "title" => order == "desc" ? tournaments.OrderByDescending(t => t.Title) : tournaments.OrderBy(t => t.Title),
-                "startdate" => order == "desc" ? tournaments.OrderByDescending(t => t.StartDate) : tournaments.OrderBy(t => t.StartDate),
-                _ => tournaments
-            };
-
-            var dtos = _mapper.Map<IEnumerable<TournamentDto>>(tournaments);
-            return Ok(dtos);
+            var result = await _service.TournamentService.GetAllAsync(includeGames, sortBy, order, page, pageSize);
+            return Ok(result);
         }
 
 
         [HttpGet("{id}")]
         public async Task<ActionResult<TournamentDto>> GetTournamentDetails(int id)
         {
-            var tournament = await _unitOfWork.TournamentRepository.GetByIdAsync(id);
-            if (tournament == null) return NotFound($"Game with ID {id} not found.");
-            var dto = _mapper.Map<TournamentDto>(tournament);
+            var dto = await _service.TournamentService.GetByIdAsync(id);
+            if (dto == null) return NotFound($"Tournament with ID {id} not found.");
             return Ok(dto);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<TournamentDto>> PostTournamentDetails(TournamentForCreationDto dto)
+        {
+            var created = await _service.TournamentService.CreateAsync(dto);
+            return CreatedAtAction(nameof(GetTournamentDetails), new { id = created.Id }, created);
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> PutTournamentDetails(int id, TournamentForUpdateDto dto)
         {
-            var tournament = await _unitOfWork.TournamentRepository.GetByIdAsync(id);
-            if (tournament == null)
-                return NotFound();
-
-            tournament.Title = dto.Title;
-            tournament.StartDate = dto.StartDate;
-
-            tournament.Games.Clear();
-            foreach (var gameId in dto.GameIds)
-            {
-                var game = await _unitOfWork.GameRepository.GetByIdAsync(gameId);
-                if (game == null)
-                    return BadRequest($"Game ID {gameId} not found.");
-
-                tournament.Games.Add(game);
-            }
-
-            await _unitOfWork.CompleteAsync();
-            return NoContent();
-        }
-
-
-        [HttpPost]
-        public async Task<ActionResult<TournamentDto>> PostTournamentDetails(TournamentForCreationDto tournamentDto)
-        {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             try
             {
-                var tournamentEntity = _mapper.Map<TournamentDetails>(tournamentDto);
-
-                foreach (var game in tournamentEntity.Games)
-                {
-                    game.TournamentDetails = tournamentEntity;
-                }
-
-                _unitOfWork.TournamentRepository.Add(tournamentEntity);
-                await _unitOfWork.CompleteAsync();
-
-                var resultDto = _mapper.Map<TournamentDto>(tournamentEntity);
-                return CreatedAtAction(nameof(GetTournamentDetails), new { id = tournamentEntity.Id }, resultDto);
+                var success = await _service.TournamentService.UpdateAsync(id, dto);
+                return success ? NoContent() : NotFound();
             }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+            catch (InvalidOperationException ex)
+            { 
+                return BadRequest(ex.Message);
             }
         }
-
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTournamentDetails(int id)
         {
-            var tournament = await _unitOfWork.TournamentRepository.GetByIdAsync(id);
-            if (tournament == null) return NotFound();
-
-            try
-            {
-                _unitOfWork.TournamentRepository.Remove(tournament);
-                await _unitOfWork.CompleteAsync();
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
-            return NoContent();
+            var success = await _service.TournamentService.DeleteAsync(id);
+            return success ? NoContent() : NotFound();
         }
 
         [HttpPatch("{id}")]
@@ -130,33 +71,8 @@ namespace Tournament.Presentation.Controllers
             if (patchDoc == null)
                 return BadRequest("Patch document cannot be null.");
 
-            var tournament = await _unitOfWork.TournamentRepository.GetByIdAsync(id);
-            if (tournament == null)
-                return NotFound($"Tournament with ID {id} not found.");
-
-            var tournamentDto = _mapper.Map<TournamentDto>(tournament);
-
-            patchDoc.ApplyTo(tournamentDto, error =>
-            {
-                ModelState.AddModelError(error.AffectedObject?.ToString() ?? "", error.ErrorMessage);
-            });
-
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            _mapper.Map(tournamentDto, tournament);
-
-            try
-            {
-                await _unitOfWork.CompleteAsync();
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
-
-            return Ok(tournamentDto);
+            var patched = await _service.TournamentService.PatchAsync(id, patchDoc);
+            return patched == null ? NotFound() : Ok(patched);
         }
-
     }
 }
