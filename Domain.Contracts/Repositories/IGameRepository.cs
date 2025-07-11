@@ -11,5 +11,7 @@ namespace Domain.Contracts.Repositories
         void Update(Game game);
         void Remove(Game game);
         Task<Game?> GetByTitleAsync(string title);
+        Task<int> CountGamesByTournamentIdAsync(int tournamentId);
+
     }
 }

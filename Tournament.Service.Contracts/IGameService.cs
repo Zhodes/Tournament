@@ -13,4 +13,5 @@ public interface IGameService
     Task<IActionResult> UpdateGameAsync(int id, GameForUpdateDto dto);
     Task<IActionResult> DeleteGameAsync(int id);
     Task<ActionResult<GameDto>> PatchGameAsync(int id, JsonPatchDocument<GameDto> patchDoc, ModelStateDictionary modelState);
+
 }

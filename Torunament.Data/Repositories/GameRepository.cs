@@ -54,5 +54,11 @@ namespace Tournament.Data.Repositories
         {
             _context.Game.Update(game);
         }
+
+        public async Task<int> CountGamesByTournamentIdAsync(int tournamentId)
+        {
+            return await _context.Game.CountAsync(g => g.TournamentDetailsId == tournamentId);
+        }
+
     }
 }
